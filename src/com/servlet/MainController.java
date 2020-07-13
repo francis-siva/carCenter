@@ -106,7 +106,11 @@ public class MainController extends HttpServlet {
 					User[] user = {new User("Dominic Toretto", Profil.B), new User("Brian O'Conner", Profil.B),
 							new User("Tej Parker", Profil.D), new User("Han Lue", Profil.D)}; 
 					
-					request.setAttribute("user", user);
+					LOG.log(Level.INFO, "Admin Session start");
+					HttpSession session = request.getSession();
+					session.setAttribute("login", login);
+					session.setAttribute("isConnected", true);
+					session.setAttribute("user", user);
 					pathname = "./admin.jsp";
 				}
 				//else if(login.equals("dom") && code.equals("dt")) {
