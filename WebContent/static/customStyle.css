@@ -1,0 +1,12 @@
+*, .navbar-dark .navbar-toggler {outline: none;}
+
+a[title=Quit] {color: #212529;}
+
+a[title=Quit]:hover {color: #0056b3;}
+
+.btn.btn-secondary.btn-lg.btn-block.btn_user_option {
+	background-color: #d6d8d9;
+	color: #040505;
+	border-color: #e9ecef;
+	font-weight: 600;
+}
