@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="com.model.User" %>
+<% 	User[] users = (User[]) session.getAttribute("user");
+	request.setAttribute("pageTitle", "Admin Management"); %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -11,15 +13,26 @@
 	</head>
 	<body>
 		<div class="container-fluid">
-			<h1>Account Management</h1>
-				<jsp:include page="./navMenu.jsp" />
-				<div class="mx-auto" style="width: 200px;">
-					<h2>Members' list</h2>
-					<%					
-						User[] users = (User[]) request.getAttribute("user");
-						for(int i = 0; i < users.length; i++) { %>
-							<p><%out.println(i + ") " + users[i].getName() + " [" + users[i].getProfilType() + "]");%></p>
-					<%	}%>
-				</div>
+			<jsp:include page="./header.jsp" />
+			<jsp:include page="./navMenu.jsp" />
+				<h2>Members' list</h2>
+				<table class="table table-striped table-bordered">
+				  	<thead>
+			    		<tr>
+					      	<th scope="col">#</th>
+					      	<th scope="col">User</th>
+					      	<th scope="col">Profile</th>
+				    	</tr>
+				  	</thead>
+				  	<tbody>
+				<%	for(int i = 0; i < users.length; i++) { %>
+						<tr>
+					      <th scope="row"><%= i%>)</th>
+					      <td><%= users[i].getName().toUpperCase()%></td>
+					      <td><%= users[i].getProfilType()%></td>
+						</tr>						      
+				<%	}%>
+					</tbody>
+				</table>
 		</div>
 	<jsp:include page="./footer.jsp" />

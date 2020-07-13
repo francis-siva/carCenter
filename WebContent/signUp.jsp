@@ -14,11 +14,11 @@
 				<div class="mx-auto" style="width: 200px;">
 					<form action="signUp" method="post" >
 						<label for="login">Login :
-							<input type="text" name="login" id="login" autofocus class="form-control" />
+							<input type="text" name="login" id="login" placeholder="Enter your login" autofocus class="form-control" />
 						</label>
 						<br />
 						<label for="pwd">Password :
-							<input type="password" name="pwd" id="pwd" class="form-control" />
+							<input type="password" name="pwd" id="pwd" placeholder="Enter your secret code" class="form-control" />
 						</label>
 						<br />
 						
@@ -34,7 +34,7 @@
 						    Dealer
 						  </label>
 						</div>
-						
+						<br />
 						<input type="submit" class="btn btn-outline-primary" name="Register" value="Create account" />
 					</form>
 					<div>

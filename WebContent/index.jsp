@@ -10,22 +10,24 @@
 	</head>
 	<body>
 		<div class="container-fluid">
-			<h1>Sign in to CarCenter</h1>
-				<div class="mx-auto" style="width: 200px;">
-					<form action="./signIn" method="post" >
-						<label for="login">Login :
-							<input type="text" name="login" id="login" autofocus class="form-control" />
-						</label>
-						<br />
-						<label for="pwd">Password :
-							<input type="password" name="pwd" id="pwd" class="form-control" />
-						</label>
-						<br />
-						<input type="submit" class="btn btn-outline-info" name="Valid" value="Sign in" />
-					</form>
-					<div>
-						<a href="./signUp.jsp">Sign up</a>
-					</div>
+			<header>
+				<h1>Sign in to CarCenter</h1>
+			</header>			
+			<div class="mx-auto" style="width: 200px;">
+				<form action="./signIn" method="post" >
+					<label for="login">Login :
+						<input type="text" name="login" id="login" placeholder="Your login" autofocus class="form-control" />
+					</label>
+					<br />
+					<label for="pwd">Password :
+						<input type="password" name="pwd" id="pwd" placeholder="Your password" class="form-control" />
+					</label>
+					<br />
+					<input type="submit" class="btn btn-outline-info" name="Valid" value="Sign in" />
+				</form>
+				<div>
+					<a href="./signUp.jsp">Sign up</a>
 				</div>
+			</div>
 		</div>
 	<jsp:include page="./footer.jsp" />

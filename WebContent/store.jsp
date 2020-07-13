@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%	request.setAttribute("pageTitle", "Our Store"); %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -10,8 +11,8 @@
 	</head>
 	<body>
 		<div class="container-fluid">
-			<h1>Our Store</h1>
-				<jsp:include page="./navMenu.jsp" />
+			<jsp:include page="./header.jsp" />
+			<jsp:include page="./navMenu.jsp" />
 				<table class="table table-hover">
 					<thead>
 						<tr>
