@@ -89,6 +89,7 @@ public class MainController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		boolean isAdmin = false;
 		String pathname = "./";
 		String login = (String) request.getParameter("login");
 		String code = (String) request.getParameter("pwd");
@@ -104,13 +105,17 @@ public class MainController extends HttpServlet {
 				
 				if("admin".equals(login) && "root".equals(code)) {
 					User[] user = {new User("Dominic Toretto", Profil.B), new User("Brian O'Conner", Profil.B),
-							new User("Tej Parker", Profil.D), new User("Han Lue", Profil.D)}; 
+							new User("Tej Parker", Profil.D), new User("Han Lue", Profil.D)};
+
+					isAdmin = true;
 					
 					LOG.log(Level.INFO, "Admin Session start");
 					HttpSession session = request.getSession();
 					session.setAttribute("login", login);
+					session.setAttribute("isAdmin", isAdmin);
 					session.setAttribute("isConnected", true);
 					session.setAttribute("user", user);
+					
 					pathname = "./admin.jsp";
 				}
 				//else if(login.equals("dom") && code.equals("dt")) {

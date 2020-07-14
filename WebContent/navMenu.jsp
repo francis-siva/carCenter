@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<% boolean isAdmin = ("admin".equals((String) session.getAttribute("login"))); %>    
+<% boolean isAdmin = (session.getAttribute("isAdmin") != null &&
+	Boolean.TRUE.equals((boolean)session.getAttribute("isAdmin"))); %>    
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	  <a class="navbar-brand" href="#">NavMenu</a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
