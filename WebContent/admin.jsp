@@ -29,7 +29,7 @@
 						<tr>
 					      <th scope="row"><%= i%>)</th>
 					      <td><%= users[i].getName().toUpperCase()%></td>
-					      <td><%= users[i].getProfilType()%></td>
+					      <td><%= users[i].getProfileType()%></td>
 						</tr>						      
 				<%	}%>
 					</tbody>
