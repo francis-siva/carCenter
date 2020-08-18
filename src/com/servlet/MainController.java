@@ -1,6 +1,9 @@
 package com.servlet;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,28 +14,56 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.dao.DAOFactory;
+import com.dao.UserDaoImpl;
 import com.model.User;
-import com.model.User.Profil;
 
 /**
  * Servlet implementation class MainController
  */
-@WebServlet(urlPatterns = {"/signIn", "/signUp"})
+@WebServlet(urlPatterns = {"/signIn", "/signUp"}, loadOnStartup = 1)
 public class MainController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger LOG = Logger.getLogger(Class.class.getName());
-    /**
-     * Default constructor. 
-     */
+
     public MainController() {
-        
+    	
     }
 
     @Override
 	public void init() throws ServletException {
-		LOG.log(Level.INFO, "Test of logger by init() method");
 		super.init();
+    	LOG.log(Level.INFO, "Test of logger on init() method");
+		
+		System.out.println("\n##FILE_PROPERTIES Connection way##");
+		
+		DAOFactory daofactory = (DAOFactory) getServletContext().getAttribute("daofactory");
+    	UserDaoImpl userDao = (UserDaoImpl) daofactory.getUserDAO();
+		
+    	System.out.println(userDao.find("dom_t@gmail.com"));
+    	User user = userDao.find("dom_t@gmail.com");
+    	System.out.println("Password: " +user.getPassword());//"dom01"
+    	String plaincode = "dom01";
+    	
+    	try {
+    		MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+    	    md.update(plaincode.getBytes(StandardCharsets.UTF_8));
+    	    byte[] digest = md.digest();
+
+    	    String hex = String.format("%064x", new BigInteger(1, digest));
+    		
+			// // // //
+    	    System.out.println("hexint64: " + hex);
+		}
+    	catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[======= See MSG CLEARly =======]\n");
+			e.getMessage();
+		}
+
+    	System.out.println("\n##END process of FILE_PROPERTIES Connection way##");
 	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -52,6 +83,7 @@ public class MainController extends HttpServlet {
 			
 			if(disconnected) {
 				//Closing Session Handler
+				LOG.log(Level.INFO, "Ending of Session");
 				request.getSession().invalidate();
 				pathname = this.getServletContext().getContextPath();				
 			}
@@ -61,11 +93,15 @@ public class MainController extends HttpServlet {
 				
 				//Get login's value typed in index.jsp's Form
 				String login = (String) session.getAttribute("login");
-				System.out.println("id: "+ login);
+				System.out.println("id: "+ login);System.out.println("\npathname: "+ pathname);
 				
 				if(login != null && login.trim().length() > 0) {
 					pathname="./user.jsp";
-				}				
+				}
+				else {
+					System.out.println("Session lost !");
+					pathname="./index.jsp";
+				}
 			}			
 		}		
 		else {
@@ -104,9 +140,9 @@ public class MainController extends HttpServlet {
 				System.out.println("User Connection process");
 				
 				if("admin".equals(login) && "root".equals(code)) {
-					User[] user = {new User("Dominic Toretto", Profil.B), new User("Brian O'Conner", Profil.B),
-							new User("Tej Parker", Profil.D), new User("Han Lue", Profil.D)};
-
+					User[] user = {new User(1, "Dominic Toretto", "Buyer", "dom_t@gmail.com", "dom01"), new User(2, "Brian O'Conner", "Buyer", "oconner@outlook.com", "ocb02"),
+							new User(3, "Tej Parker", "Dealer", "tparker@gmail.com", "tej03"), new User(4, "Han Lue", "Dealer", "han_l@protonmail.com", "han123")};
+					
 					isAdmin = true;
 					
 					LOG.log(Level.INFO, "Admin Session start");
