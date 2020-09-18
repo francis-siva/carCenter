@@ -17,7 +17,10 @@ public class DaoFactoryInitializer implements ServletContextListener {
 		ServletContext servletContext = sce.getServletContext();
 		servletContext.log("## App launch ##");
 		
+		//##FILE_PROPERTIES Connection way##
 		this.daofactory = DAOFactory.getInstance();
+		//##END process of FILE_PROPERTIES Connection way##
+		
 		System.out.println("DAOFactory is instantiated!");
 		servletContext.setAttribute("daofactory", daofactory);
 	}

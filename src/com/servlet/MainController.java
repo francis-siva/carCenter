@@ -26,6 +26,8 @@ public class MainController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger LOG = Logger.getLogger(Class.class.getName());
+	
+	private UserDaoImpl userDao;
 
     public MainController() {
     	
@@ -34,36 +36,19 @@ public class MainController extends HttpServlet {
     @Override
 	public void init() throws ServletException {
 		super.init();
-    	LOG.log(Level.INFO, "Test of logger on init() method");
-		
-		System.out.println("\n##FILE_PROPERTIES Connection way##");
-		
+    	LOG.log(Level.INFO, "Test of logger on init() method");		
+		/*//OLD Way to get UserDaoImpl userDao
 		DAOFactory daofactory = (DAOFactory) getServletContext().getAttribute("daofactory");
-    	UserDaoImpl userDao = (UserDaoImpl) daofactory.getUserDAO();
+    	UserDaoImpl userDao = (UserDaoImpl) daofactory.getUserDAO();*/
 		
+    	this.userDao = (UserDaoImpl) ((DAOFactory) getServletContext().getAttribute("daofactory")).getUserDAO();
+
     	System.out.println(userDao.find("dom_t@gmail.com"));
     	User user = userDao.find("dom_t@gmail.com");
     	System.out.println("Password: " +user.getPassword());//"dom01"
     	String plaincode = "dom01";
+    	System.out.println(this.userDao.isPasswordMatchHashcode(plaincode, user.getPassword()));
     	
-    	try {
-    		MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-    	    md.update(plaincode.getBytes(StandardCharsets.UTF_8));
-    	    byte[] digest = md.digest();
-
-    	    String hex = String.format("%064x", new BigInteger(1, digest));
-    		
-			// // // //
-    	    System.out.println("hexint64: " + hex);
-		}
-    	catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("[======= See MSG CLEARly =======]\n");
-			e.getMessage();
-		}
-
-    	System.out.println("\n##END process of FILE_PROPERTIES Connection way##");
 	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -93,7 +78,6 @@ public class MainController extends HttpServlet {
 				
 				//Get login's value typed in index.jsp's Form
 				String login = (String) session.getAttribute("login");
-				System.out.println("id: "+ login);System.out.println("\npathname: "+ pathname);
 				
 				if(login != null && login.trim().length() > 0) {
 					pathname="./user.jsp";
@@ -154,14 +138,28 @@ public class MainController extends HttpServlet {
 					
 					pathname = "./admin.jsp";
 				}
-				//else if(login.equals("dom") && code.equals("dt")) {
 				else if((login != null && login.trim().length() > 0) && (code != null && code.trim().length() > 0)) {
-					
-					LOG.log(Level.INFO, "New User Session start");
-					HttpSession session = request.getSession();
-					session.setAttribute("login", login);
-					session.setAttribute("isConnected", true);
-					pathname = "./user.jsp";
+					User user = this.userDao.find(login);//sample "dom_t@gmail.com"
+
+					//If database returned an User, go on next process.
+					if(user != null) {
+						boolean isCorrectPwd = this.userDao.isPasswordMatchHashcode(code, user.getPassword());
+						
+						if(isCorrectPwd) {
+							LOG.log(Level.INFO, "New User Session start");
+							HttpSession session = request.getSession();
+							session.setAttribute("login", login);
+							session.setAttribute("isConnected", true);
+							pathname = "./user.jsp";
+						}
+						else {
+							request.setAttribute("userWarningMsg", "Error on User login or password ! You should retry. ");
+						}
+					}
+					else {
+						request.setAttribute("userWarningMsg", "User not found ! (Unknown Member)");
+					}
+
 				}
 				else {
 					System.out.println("404 Mock page View");

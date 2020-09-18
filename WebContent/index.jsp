@@ -9,7 +9,7 @@
 	}
 	
 	/* If session is here, then send the profile HomePage */
-   	if(isConnected) {System.out.println("pathT: "+ request.getContextPath());
+   	if(isConnected) {
 		request.getRequestDispatcher("/signIn").forward(request, response);
    	}
    	else {
@@ -26,8 +26,23 @@
 				<div class="container-fluid">
 					<header>
 						<h1>Sign in to CarCenter</h1>
-					</header>			
-					<div class="mx-auto" style="width: 200px;">
+					</header>
+						<%
+						if(request.getAttribute("userWarningMsg") != null) {
+							String warningMsg = (String) request.getAttribute("userWarningMsg");
+						%>
+						<div>
+							<div class="font-italic alert alert-warning alert-dismissible fade show" role="alert">
+						  		<%= warningMsg %>
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							    <span aria-hidden="true">&times;</span>
+							  </button>
+							</div>
+						</div>
+						<%
+						}
+						%>			
+					<div class="mx-auto" style="width: 200px;">						
 						<form action="./signIn" method="post" >
 							<label for="login">Login :
 								<input type="text" name="login" id="login" placeholder="Your login" autofocus class="form-control" />
@@ -45,4 +60,4 @@
 					</div>
 				</div>
 			<jsp:include page="./footer.jsp" />
-  <%}%>
+<%  }%>
