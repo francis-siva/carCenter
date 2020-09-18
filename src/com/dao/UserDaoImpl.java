@@ -1,5 +1,8 @@
 package com.dao;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -65,5 +68,37 @@ public class UserDaoImpl implements UserDao {
 		user.setPassword(resultSet.getString("secret_code"));
 		
 		return user;
+	}
+	
+	/**
+	 * Check <code>String</code> value with hashed code value.<br />
+	 * Returns <code>true</code> if <code>plaincode</code> equals 
+	 * <code>hashedcode</code> else <code>false</code>.
+	 * @param plaincode
+	 * @param hashedcode
+	 * @return
+	 */
+	public boolean isPasswordMatchHashcode(String plaincode, String hashedcode) {
+		boolean checkPwd = false;
+		
+		try {
+    		MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+    	    md.update(plaincode.getBytes(StandardCharsets.UTF_8));
+    	    byte[] digest = md.digest();
+
+    	    String hex = String.format("%064x", new BigInteger(1, digest));
+    		
+    	    System.out.println("hexint64: " + hex);
+    	    if(hashedcode.equals(hex))
+    	    	checkPwd = true;
+		}
+    	catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("[======= See MSG CLEARly =======]\n");
+			e.getMessage();
+		}
+		
+		return checkPwd;
 	}
 }
