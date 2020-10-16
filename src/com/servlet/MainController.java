@@ -168,6 +168,31 @@ public class MainController extends HttpServlet {
 				break;
 			case "signUp":
 				System.out.println("Registration process");
+				System.out.println("userProfile: " + request.getParameter("userProfile"));
+				
+				//Stoke 2 more inputs from SignUp form ("name", "userProfile")
+				String name = request.getParameter("name");
+				String userProfile = request.getParameter("userProfile");
+				
+				//Check If all required inputs are filled out
+				if((login != null && login.trim().length() > 0) && (code != null && code.trim().length() > 0) 
+						&& (name != null && name.trim().length() > 0) && (userProfile != null && userProfile.trim().length() > 0)) {
+					User newMember = this.userDao.find(login);
+					System.out.println(newMember);
+					
+					//If login already exist, warn the newMember
+					if(newMember != null) {						
+						request.setAttribute("userWarningMsg", "\"" + login + "\" login is already used. You should try another one.");
+						pathname = "./signUp.jsp";
+					}
+					else {
+						System.out.println("Registration next process !");
+					}
+				}
+				else {
+					request.setAttribute("userWarningMsg", "All fields are required ! Please fill out.");
+					pathname = "./signUp.jsp";
+				}
 				break;
 			/*default:
 				System.out.println("Back to HomePage");
