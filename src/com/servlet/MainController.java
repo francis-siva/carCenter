@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -170,7 +171,7 @@ public class MainController extends HttpServlet {
 				System.out.println("Registration process");
 				System.out.println("userProfile: " + request.getParameter("userProfile"));
 				
-				//Stoke 2 more inputs from SignUp form ("name", "userProfile")
+				//Stock 2 more inputs from SignUp form ("name", "userProfile")
 				String name = request.getParameter("name");
 				String userProfile = request.getParameter("userProfile");
 				
@@ -178,7 +179,7 @@ public class MainController extends HttpServlet {
 				if((login != null && login.trim().length() > 0) && (code != null && code.trim().length() > 0) 
 						&& (name != null && name.trim().length() > 0) && (userProfile != null && userProfile.trim().length() > 0)) {
 					User newMember = this.userDao.find(login);
-					System.out.println(newMember);
+					System.out.println("newMember res : " + newMember);
 					
 					//If login already exist, warn the newMember
 					if(newMember != null) {						
@@ -186,7 +187,21 @@ public class MainController extends HttpServlet {
 						pathname = "./signUp.jsp";
 					}
 					else {
-						System.out.println("Registration next process !");
+						//Email verification for various possibilities (starts with 1 char before '@', never starts or ends by char [.-_](even before '@'), etc.)
+						//REGEX: #^(([a-z0-9])+|([a-z0-9][a-z0-9._-]*[a-z0-9]))@(([a-z0-9])|([a-z0-9][a-z0-9._-])){2,}[a-z0-9]\.[a-z]{2,4}$#
+						String regex = "^(([a-z0-9])+|([a-z0-9][a-z0-9._-]*[a-z0-9]))@(([a-z0-9])|([a-z0-9][a-z0-9._-])){2,}[a-z0-9]\\.[a-z]{2,4}$";
+						System.out.println("Regex res: " + Pattern.matches(regex, login));
+						
+						//Not a proper match
+						if(!Pattern.matches(regex, login)) {
+							request.setAttribute("userWarningMsg", "Error on login \"<strong>" + login + "</strong>\". Please enter a valid email address.<br />For example, driver@gmail.com");
+							pathname = "./signUp.jsp";
+						}
+						else {//Match well with email regex
+							System.out.println("Registration db process !");
+							//TODO INSERT INTO table
+							//this.userDao.create()
+						}
 					}
 				}
 				else {
