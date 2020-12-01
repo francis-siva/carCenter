@@ -200,6 +200,12 @@ public class MainController extends HttpServlet {
 						else {//Match well with email regex
 							System.out.println("Registration db process !");
 							//TODO INSERT INTO table
+							newMember = new User();
+							newMember.setName(name);
+							newMember.setProfileType(userProfile);
+							newMember.setEmail(login);
+							newMember.setPassword(this.userDao.makeHashcode(code));
+							System.out.println(newMember);
 							//this.userDao.create()
 						}
 					}

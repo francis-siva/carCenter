@@ -18,6 +18,8 @@ public class UserDaoImpl implements UserDao {
 	
 	private static final String SQL_SELECT_BY_EMAIL = "SELECT id, name, profileType, email, secret_code FROM user WHERE email = ?";
 	
+	private static final String SQL_INSERT_USER = "INSER INTO todestroy (name, profileType, email, secret_code) VALUES(?, ?, ?, ?)";
+	
 	public UserDaoImpl(DAOFactory daoFactory) {
 		this.daoFactory = daoFactory;
 	}
@@ -25,7 +27,22 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public void create(User user) throws IllegalArgumentException, DAOException {
 		
-
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;		
+		
+		try {
+			connection = this.daoFactory.getConnection();
+			preparedStatement = initializePreparedStatement(connection, SQL_INSERT_USER, true, user.getName(), user.getProfileType(), user.getEmail(), user.getPassword());
+			resultSet = preparedStatement.executeQuery();
+			preparedStatement.getGeneratedKeys();
+		}
+		catch (Exception e) {
+			throw new DAOException(e);
+		}
+		finally {
+			
+		}
 	}
 
 	@Override
@@ -72,33 +89,46 @@ public class UserDaoImpl implements UserDao {
 	
 	/**
 	 * Check <code>String</code> value with hashed code value.<br />
-	 * Returns <code>true</code> if <code>plaincode</code> equals 
-	 * <code>hashedcode</code> else <code>false</code>.
 	 * @param plaincode
 	 * @param hashedcode
-	 * @return
+	 * @return Returns <strong><code>true</code></strong> if
+	 * <strong>plaincode</strong> equals 
+	 * <strong>hashedcode</strong> else <strong><code>false</code></strong>.
 	 */
 	public boolean isPasswordMatchHashcode(String plaincode, String hashedcode) {
 		boolean checkPwd = false;
 		
+	    String hex = makeHashcode(plaincode);
+		
+	    if(hashedcode.equals(hex))
+	    	checkPwd = true;
+		
+		return checkPwd;
+	}
+	
+	/**
+	 * Create a hashcode from a plain code <code>String</code> value.<br />
+	 * Making it secure with hash function by a digest <strong>SHA-256</strong> (256 bits).
+	 * @param plaincode
+	 * @return hashcode
+	 */
+	public String makeHashcode(String plaincode) {
+		String hex = "";
 		try {
     		MessageDigest md = MessageDigest.getInstance("SHA-256");
 
     	    md.update(plaincode.getBytes(StandardCharsets.UTF_8));
     	    byte[] digest = md.digest();
 
-    	    String hex = String.format("%064x", new BigInteger(1, digest));
+    	    hex = String.format("%064x", new BigInteger(1, digest));
     		
-    	    System.out.println("hexint64: " + hex);
-    	    if(hashedcode.equals(hex))
-    	    	checkPwd = true;
+    	    System.out.println("hexint64: " + hex);    	    
 		}
     	catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("[======= See MSG CLEARly =======]\n");
 			e.getMessage();
 		}
-		
-		return checkPwd;
+		return hex;
 	}
 }
