@@ -40,13 +40,6 @@ public class MainController extends HttpServlet {
     	UserDaoImpl userDao = (UserDaoImpl) daofactory.getUserDAO();*/
 		
     	this.userDao = (UserDaoImpl) ((DAOFactory) getServletContext().getAttribute("daofactory")).getUserDAO();
-
-    	System.out.println(userDao.find("dom_t@gmail.com"));
-    	User user = userDao.find("dom_t@gmail.com");
-    	System.out.println("Password: " +user.getPassword());//"dom01"
-    	String plaincode = "dom01";
-    	System.out.println(this.userDao.isPasswordMatchHashcode(plaincode, user.getPassword()));
-    	
 	}
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -137,7 +130,7 @@ public class MainController extends HttpServlet {
 					pathname = "./admin.jsp";
 				}
 				else if((login != null && login.trim().length() > 0) && (code != null && code.trim().length() > 0)) {
-					User user = this.userDao.find(login);//sample "dom_t@gmail.com"
+					User user = this.userDao.find(login);
 
 					//If database returned an User, go on next process.
 					if(user != null) {
