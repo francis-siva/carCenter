@@ -1,9 +1,6 @@
 package com.servlet;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -198,15 +195,22 @@ public class MainController extends HttpServlet {
 							pathname = "./signUp.jsp";
 						}
 						else {//Match well with email regex
-							System.out.println("Registration db process !");
-							//TODO INSERT INTO table
-							newMember = new User();
-							newMember.setName(name);
-							newMember.setProfileType(userProfile);
-							newMember.setEmail(login);
-							newMember.setPassword(this.userDao.makeHashcode(code));
-							System.out.println(newMember);
-							//this.userDao.create()
+							if(code.trim().length() < 5) {
+								request.setAttribute("userWarningMsg", "Password must include <strong>at least 5 characters.</strong> Please enter a valid password.");
+								pathname = "./signUp.jsp";
+							}
+							else {
+								System.out.println("Registration db process !");
+
+								newMember = new User();
+								newMember.setName(name);
+								newMember.setProfileType(userProfile);
+								newMember.setEmail(login);
+								newMember.setPassword(this.userDao.makeHashcode(code));
+								
+								this.userDao.create(newMember);
+								System.out.println(newMember);
+							}
 						}
 					}
 				}

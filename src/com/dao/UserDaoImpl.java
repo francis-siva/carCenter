@@ -18,7 +18,7 @@ public class UserDaoImpl implements UserDao {
 	
 	private static final String SQL_SELECT_BY_EMAIL = "SELECT id, name, profileType, email, secret_code FROM user WHERE email = ?";
 	
-	private static final String SQL_INSERT_USER = "INSER INTO todestroy (name, profileType, email, secret_code) VALUES(?, ?, ?, ?)";
+	private static final String SQL_INSERT_USER = "INSERT INTO user (name, profileType, email, secret_code) VALUES(?, ?, ?, ?)";
 	
 	public UserDaoImpl(DAOFactory daoFactory) {
 		this.daoFactory = daoFactory;
@@ -29,19 +29,32 @@ public class UserDaoImpl implements UserDao {
 		
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;		
+		ResultSet autoGenValues = null;		
 		
 		try {
 			connection = this.daoFactory.getConnection();
-			preparedStatement = initializePreparedStatement(connection, SQL_INSERT_USER, true, user.getName(), user.getProfileType(), user.getEmail(), user.getPassword());
-			resultSet = preparedStatement.executeQuery();
-			preparedStatement.getGeneratedKeys();
+			preparedStatement = initializePreparedStatement(connection, SQL_INSERT_USER, true, user.getName(), user.getProfileType(), user.getEmail(), user.getPassword());System.out.println("SQL: "+SQL_INSERT_USER);
+			int respSqlState = preparedStatement.executeUpdate();
+			
+			//respSqlState will return 0 in case of INSERT query error else 1 for its success
+			if(respSqlState == 0) {
+				throw new DAOException("Failed to register new user. No new member added in database.");
+			}
+			
+			//Keep the new user's ID in autoGenValues after executeUpdate()
+			autoGenValues = preparedStatement.getGeneratedKeys();
+			if(autoGenValues.next()) {
+				user.setId(autoGenValues.getInt(1));
+			}
+			else {
+				throw new DAOException("Failure of user creation in database, no AUTO-Generated-ID returned.");
+			}
 		}
 		catch (Exception e) {
 			throw new DAOException(e);
 		}
 		finally {
-			
+			closeAllDbRelativeRessources(autoGenValues, preparedStatement, connection);
 		}
 	}
 
@@ -57,7 +70,6 @@ public class UserDaoImpl implements UserDao {
 			connection = this.daoFactory.getConnection();
 			
 			preparedStatement = initializePreparedStatement(connection, SQL_SELECT_BY_EMAIL, false, email);
-			//System.out.println("parcours GenKey: " + preparedStatement.getGeneratedKeys());
 			resultSet = preparedStatement.executeQuery();
 
 			if(resultSet.next()) {
